@@ -5,17 +5,17 @@ declare(strict_types=1);
 namespace Composer\Satis\Webhook\Config;
 
 
-final class Routes extends BaseConfig
+final class RoutesValidator extends BaseConfigValidator
 {
     private $reqiredGroupKeys = [
-        'pattern' => BaseConfig::STRING,
-        'routes' => BaseConfig::ARRAY
+        'pattern' => BaseConfigValidator::STRING,
+        'routes' => BaseConfigValidator::ARRAY
     ];
     private $reqiredRouteKeys = [
-        'pattern' => BaseConfig::STRING,
-        'type' => BaseConfig::STRING,
-        'methods' => BaseConfig::ARRAY,
-        'handler' => BaseConfig::STRING
+        'pattern' => BaseConfigValidator::STRING,
+        'type' => BaseConfigValidator::STRING,
+        'methods' => BaseConfigValidator::ARRAY,
+        'handler' => BaseConfigValidator::STRING
     ];
 
     /**
@@ -26,7 +26,7 @@ final class Routes extends BaseConfig
     protected function validate(iterable $config): iterable
     {
         foreach ($config as $name => $item) {
-            $this->check($item, ['type' => BaseConfig::STRING]);
+            $this->check($item, ['type' => BaseConfigValidator::STRING]);
             if ('group' === $item['type']) {
                 $this->check($item, $this->reqiredGroupKeys);
                 foreach ($item['routes'] as $route) {

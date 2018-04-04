@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Composer\Satis\Webhook\AuthMiddleware;
 use Composer\Satis\Webhook\Command\AddPackageCommand;
 use Composer\Satis\Webhook\Command\UpdateRepositoryCommand;
 use Psr\Container\ContainerInterface;
@@ -14,18 +15,19 @@ return [
             'type' => 'group',
             'routes' => [
                 'add' => [
-                    'pattern' => '/add/{key}',
+                    'pattern' => '/add/{platform}/{key}',
                     'type' => 'route',
                     'methods' => ['POST'],
                     'handler' => AddPackageCommand::class
                 ],
                 'update' => [
-                    'pattern' => '/update/{key}',
+                    'pattern' => '/update/{platform}/{key}',
                     'type' => 'route',
                     'methods' => ['POST'],
                     'handler' => UpdateRepositoryCommand::class
                 ]
-            ]
-        ],
+            ],
+            'middleware' => AuthMiddleware::class
+        ]
     ],
 ];

@@ -8,11 +8,18 @@ namespace Composer\Satis\Webhook\Config;
 use Psr\Container\ContainerInterface;
 use Slim\Interfaces\RouterInterface;
 
-final class Handler extends BaseConfig
+final class HandlerValidator extends BaseConfigValidator
 {
     private $requiredKeys = [
-        ContainerInterface::class,
-        RouterInterface::class
+        ContainerInterface::class => [
+            BaseConfigValidator::ARRAY,
+            ContainerInterface::class
+        ],
+        RouterInterface::class => BaseConfigValidator::ARRAY,
+        'secret' => BaseConfigValidator::STRING,
+        'uri_key' => BaseConfigValidator::STRING,
+        'satis_config' => BaseConfigValidator::STRING,
+        'output_dir' => BaseConfigValidator::STRING
     ];
 
     /**
