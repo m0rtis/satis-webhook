@@ -112,10 +112,7 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      */
     public function offsetGet($offset)
     {
-        if ($this->offsetExists($offset)) {
-            return $this->data[$offset];
-        }
-        return null;
+        return $this->get($offset);
     }
 
     /**
@@ -175,7 +172,7 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      */
     public function get($id)
     {
-        return $this->offsetGet($id);
+
     }
 
     /**
@@ -191,6 +188,6 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      */
     public function has($id)
     {
-        return $this->offsetExists($id);
+        return isset($this->data[$id]);
     }
 }

@@ -7,10 +7,13 @@ namespace Composer\Satis\Webhook;
 use Composer\Satis\Webhook\Config\HandlerValidator;
 use Composer\Satis\Webhook\Config\RoutesValidator;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
 use Slim\Interfaces\RouterInterface;
 
-final class Handler extends App
+final class Handler extends App implements RequestHandlerInterface
 {
     /**
      * Handler constructor.
@@ -31,15 +34,16 @@ final class Handler extends App
      */
     private function initContainerFromConfig($containerConfig): ?ContainerInterface
     {
+        $container = null;
         if ($containerConfig instanceof ContainerInterface || null === $containerConfig) {
-            return $containerConfig;
+            $container = $containerConfig;
         }
         if (isset($containerConfig['factory_class']) && class_exists($containerConfig['factory_class'])) {
             $factory = new $containerConfig['factory_class'];
-            return $factory($containerConfig);
+            $container = $factory($containerConfig);
         }
 
-        return null;
+        return $container;
     }
 
     /**
@@ -84,5 +88,15 @@ final class Handler extends App
                 }, $middleware);
             }
         }
+    }
+
+    /**
+     * Handle the request and return a response.
+     * @param ServerRequestInterface $request
+     * @return ResponseInterface
+     */
+    public function handle(ServerRequestInterface $request): ResponseInterface
+    {
+        return $this->run($request);
     }
 }
