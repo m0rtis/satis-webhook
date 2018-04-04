@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Composer\Satis\Webhook\Provider;
 
 
-final class Gitlab
+final class Gitlab implements ProviderInterface
 {
 
 }
