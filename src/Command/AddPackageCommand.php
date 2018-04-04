@@ -8,7 +8,7 @@ namespace Composer\Satis\Webhook\Command;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class AddPackageCommand
+final class AddPackageCommand extends BaseCommand
 {
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
