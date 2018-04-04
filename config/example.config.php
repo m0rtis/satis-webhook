@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-use Slim\Interfaces\RouterInterface;
-
 return [
     'secret' => 'someRandomLongString',
-    RouterInterface::class => [],
+    'uri_key' => 'SomeSecretKeyAsPartOfURI',
+    'satis_config' => __DIR__.'/satis.json',
+    'output_dir' => __DIR__.'/../public/'
 ];
