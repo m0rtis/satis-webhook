@@ -15,11 +15,7 @@ final class HandlerValidator extends BaseConfigValidator
             BaseConfigValidator::ARRAY,
             ContainerInterface::class
         ],
-        RouterInterface::class => BaseConfigValidator::ARRAY,
-        'secret' => BaseConfigValidator::STRING,
-        'uri_key' => BaseConfigValidator::STRING,
-        'satis_config' => BaseConfigValidator::STRING,
-        'output_dir' => BaseConfigValidator::STRING
+        RouterInterface::class => BaseConfigValidator::ARRAY
     ];
 
     /**

@@ -15,13 +15,13 @@ return [
             'type' => 'group',
             'routes' => [
                 'add' => [
-                    'pattern' => '/add/{platform}/{key}',
+                    'pattern' => '/add/{provider}/{key}',
                     'type' => 'route',
                     'methods' => ['POST'],
-                    'handler' => AddPackageCommand::class
+                    'handler' => AddPackageCommand::class,
                 ],
                 'update' => [
-                    'pattern' => '/update/{platform}/{key}',
+                    'pattern' => '/update/{provider}/{key}',
                     'type' => 'route',
                     'methods' => ['POST'],
                     'handler' => UpdateRepositoryCommand::class
