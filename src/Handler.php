@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Composer\Satis\Webhook;
 
 
-use Composer\Satis\Webhook\Config\Handler as HandlerConfigValidator;
-use Composer\Satis\Webhook\Config\Routes;
+use Composer\Satis\Webhook\Config\HandlerValidator;
+use Composer\Satis\Webhook\Config\RoutesValidator;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Interfaces\RouterInterface;
@@ -18,8 +18,8 @@ final class Handler extends App
      */
     public function __construct(iterable $config)
     {
-        $config = new HandlerConfigValidator($config);
         $config = $this->setDefaults($config);
+        $config = new HandlerValidator($config);
         $container = $this->initContainerFromConfig($config[ContainerInterface::class]);
         parent::__construct($config, $container);
         $this->initRoutesFromConfig($config[RouterInterface::class]);
@@ -66,14 +66,22 @@ final class Handler extends App
      */
     private function initRoutesFromConfig(iterable $config): void
     {
-        $config = new Routes($config);
+        $config = new RoutesValidator($config);
         foreach ($config as $name => $route) {
             if ('group' === $route['type']) {
-                $group = $this->group($route['pattern'], $route['handler']);
-                foreach ($route['routes'] as $groupRoute) {
-                    $this->map($groupRoute['methods'], $groupRoute['pattern'], $groupRoute['handler']);
-                }
-                continue;
+                $routable = $this->group($route['pattern'], function() use ($route, $name) {
+                    foreach ($route['routes'] as $groupRoute) {
+                        $this->map($groupRoute['methods'], $groupRoute['pattern'], $groupRoute['handler'])->setName($name);
+                    }
+                });
+            } else {
+                $routable = $this->map($route['methods'], $route['pattern'], $route['handler'])->setName($name);
+            }
+            if (isset($route['middleware'])) {
+                $middleware = (array) $route['middleware'];
+                array_map(function ($item) use ($routable) {
+                    $routable->add($item);
+                }, $middleware);
             }
         }
     }
