@@ -4,20 +4,21 @@ declare(strict_types=1);
 namespace Composer\Satis\Webhook;
 
 
+use Composer\Satis\Webhook\Config\Handler as HandlerConfigValidator;
+use Composer\Satis\Webhook\Config\Routes;
 use Psr\Container\ContainerInterface;
 use Slim\App;
 use Slim\Interfaces\RouterInterface;
 
 final class Handler extends App
 {
-    private $requiredConfigKeys = [
-        ContainerInterface::class,
-        RouterInterface::class
-    ];
-
+    /**
+     * Handler constructor.
+     * @param iterable $config
+     */
     public function __construct(iterable $config)
     {
-        $this->checkConfig($config);
+        $config = new HandlerConfigValidator($config);
         $config = $this->setDefaults($config);
         $container = $this->initContainerFromConfig($config[ContainerInterface::class]);
         parent::__construct($config, $container);
@@ -39,19 +40,6 @@ final class Handler extends App
         }
 
         return null;
-    }
-
-    /**
-     * @param iterable $config
-     * @throws RequiredConfigKeyDoesNotExistException
-     */
-    private function checkConfig(iterable $config): void
-    {
-        foreach ($this->requiredConfigKeys as $requiredConfigKey) {
-            if (!array_key_exists($config[$requiredConfigKey], $config)) {
-                throw new RequiredConfigKeyDoesNotExistException($requiredConfigKey);
-            }
-        }
     }
 
     /**
@@ -78,6 +66,7 @@ final class Handler extends App
      */
     private function initRoutesFromConfig(iterable $config): void
     {
+        $config = new Routes($config);
         foreach ($config as $name => $route) {
             if ('group' === $route['type']) {
                 $group = $this->group($route['pattern'], $route['handler']);
