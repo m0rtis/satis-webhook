@@ -7,7 +7,7 @@ namespace Composer\Satis\Webhook;
 
 final class ContainerFactory
 {
-    public function __invoke(): Container
+    public function __invoke(iterable $config): Container
     {
 
     }

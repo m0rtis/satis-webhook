@@ -19,14 +19,26 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      * @var iterable
      */
     protected $data;
+    /**
+     * @var iterable
+     */
+    protected $definitions;
+    /**
+     * @var DependencyInjectorInterface|null
+     */
+    private $injector;
 
     /**
      * Container constructor.
      * @param iterable $data
+     * @param iterable $definitions
+     * @param DependencyInjectorInterface|null $injector
      */
-    public function __construct(iterable $data = [])
+    public function __construct(iterable $data = [], iterable $definitions = [], ?DependencyInjectorInterface $injector = null)
     {
         $this->data = $data;
+        $this->definitions = $definitions;
+        $this->injector = $injector ?? new Injector($this);
     }
     /**
      * Return the current element
@@ -172,7 +184,20 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      */
     public function get($id)
     {
+        $result = null;
+        if ($this->has($id)) {
+            $result =  $this->data[$id];
+        } elseif($this->canResolve($id)) {
+            try {
+                $result = $this->resolve($id);
+            } catch (\Exception $e) {
+                throw new ContainerException($e);
+            }
 
+        } else {
+            throw new NotFoundException($id);
+        }
+        return $result;
     }
 
     /**
@@ -186,8 +211,39 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      *
      * @return bool
      */
-    public function has($id)
+    public function has($id): bool
     {
-        return isset($this->data[$id]);
+        return isset($this->data[$id]) || $this->canResolve($id);
+    }
+
+    private function canResolve(string $id): bool
+    {
+        $result = $this->checkDefinitions($id);
+        if (!$result && class_exists($id)) {
+            $result = $this->injector->canInstantiate($id);
+        }
+        return $result;
+    }
+
+    private function resolve(string $id)
+    {
+        $resolved = null;
+        if ($this->checkDefinitions($id)) {
+            $definition = $this->definitions[$id];
+            $resolved = \is_callable($definition) ? $definition() : $definition;
+        } else {
+            $resolved = $this->injector->instantiate($id);
+        }
+        return $resolved;
+    }
+
+    private function checkDefinitions(string $id): bool
+    {
+        $result = false;
+        if (isset($this->definitions[$id])
+            && (\is_callable($this->definitions[$id]) || $this->has((string)$this->definitions[$id]))) {
+            $result = true;
+        }
+        return $result;
     }
 }
