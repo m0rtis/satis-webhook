@@ -24,23 +24,27 @@ final class Handler extends App implements RequestHandlerInterface
         $config = $this->setDefaults($config);
         $config = new HandlerValidator($config);
         $container = $this->initContainerFromConfig($config[ContainerInterface::class]);
+        $container['config'] = $config;
         parent::__construct($config, $container);
         $this->initRoutesFromConfig($config[RouterInterface::class]);
     }
 
     /**
      * @param iterable|ContainerInterface $containerConfig
-     * @return null|ContainerInterface
+     * @return ContainerInterface
      */
-    private function initContainerFromConfig($containerConfig): ?ContainerInterface
+    private function initContainerFromConfig($containerConfig): ContainerInterface
     {
-        $container = null;
-        if ($containerConfig instanceof ContainerInterface || null === $containerConfig) {
+        if ($containerConfig instanceof ContainerInterface) {
             $container = $containerConfig;
-        }
-        if (isset($containerConfig['factory_class']) && class_exists($containerConfig['factory_class'])) {
+        } elseif (\is_array($containerConfig)
+            && isset($containerConfig['factory_class'])
+            && class_exists($containerConfig['factory_class'])
+        ) {
             $factory = new $containerConfig['factory_class'];
             $container = $factory($containerConfig);
+        } else {
+            throw new \InvalidArgumentException('Argument must be instance of ContainerInterface or array with key "factory_class"');
         }
 
         return $container;
