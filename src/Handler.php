@@ -32,6 +32,7 @@ final class Handler extends App implements RequestHandlerInterface
     /**
      * @param iterable|ContainerInterface $containerConfig
      * @return ContainerInterface
+     * @throws \InvalidArgumentException
      */
     private function initContainerFromConfig($containerConfig): ContainerInterface
     {
@@ -41,7 +42,7 @@ final class Handler extends App implements RequestHandlerInterface
             && isset($containerConfig['factory_class'])
             && class_exists($containerConfig['factory_class'])
         ) {
-            $factory = new $containerConfig['factory_class'];
+            $factory = new $containerConfig['factory_class']();
             $container = $factory($containerConfig);
         } else {
             throw new \InvalidArgumentException('Argument must be instance of ContainerInterface or array with key "factory_class"');

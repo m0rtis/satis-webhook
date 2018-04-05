@@ -185,8 +185,8 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
     public function get($id)
     {
         $result = null;
-        if ($this->has($id)) {
-            $result =  $this->data[$id];
+        if (isset($this->data[$id])) {
+            $result = $this->data[$id];
         } elseif($this->canResolve($id)) {
             try {
                 $result = $this->resolve($id);
@@ -225,12 +225,20 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
         return $result;
     }
 
+    /**
+     * @param string $id
+     * @return mixed
+     */
     private function resolve(string $id)
     {
         $resolved = null;
         if ($this->checkDefinitions($id)) {
             $definition = $this->definitions[$id];
-            $resolved = \is_callable($definition) ? $definition() : $definition;
+            if (\is_callable($definition)) {
+                $resolved = $definition();
+            } elseif ($this->has((string)$definition)) {
+                $resolved = $this->get($definition);
+            }
         } else {
             $resolved = $this->injector->instantiate($id);
         }
