@@ -22,6 +22,7 @@ final class HandlerValidator extends BaseConfigValidator
      * @param iterable $config
      * @return iterable
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     protected function validate(iterable $config): iterable
     {

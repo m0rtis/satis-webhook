@@ -57,6 +57,7 @@ abstract class BaseCommand
     /**
      * @param string $provider
      * @return ProviderInterface
+     * @throws \InvalidArgumentException
      * @throws \ReflectionException
      */
     protected function getProvider(string $provider): ProviderInterface

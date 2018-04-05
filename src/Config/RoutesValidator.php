@@ -22,6 +22,7 @@ final class RoutesValidator extends BaseConfigValidator
      * @param iterable $config
      * @return iterable
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     protected function validate(iterable $config): iterable
     {
@@ -32,6 +33,8 @@ final class RoutesValidator extends BaseConfigValidator
                 foreach ($item['routes'] as $route) {
                     $this->check($route, $this->reqiredRouteKeys);
                 }
+            } else {
+                $this->check($item, $this->reqiredRouteKeys);
             }
         }
         return $config;

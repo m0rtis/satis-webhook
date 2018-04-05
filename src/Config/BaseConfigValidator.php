@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 
 namespace Composer\Satis\Webhook\Config;
-use Composer\Satis\Webhook\Container;
+use Composer\Satis\Webhook\Container\Container;
 use InvalidArgumentException;
 
 
@@ -39,6 +39,7 @@ abstract class BaseConfigValidator extends Container
      * @param iterable $item
      * @param array $requiredKeys
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     protected function check(iterable $item, array $requiredKeys): void
     {
@@ -63,9 +64,14 @@ abstract class BaseConfigValidator extends Container
         }
     }
 
+    /**
+     * @param string $givenType
+     * @param array $types
+     * @return bool
+     * @throws \ReflectionException
+     */
     private function typeCheck(string $givenType, array $types): bool
     {
-        $result = false;
         if (\in_array($givenType, $types, true)) {
             $result = true;
         } else {

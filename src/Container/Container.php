@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace Composer\Satis\Webhook;
+namespace Composer\Satis\Webhook\Container;
 
 
 use Psr\Container\ContainerExceptionInterface;
@@ -11,7 +11,7 @@ use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Class Container
- * @package Composer\Satis\Webhook
+ * @package Composer\Satis\Webhook\Container
  */
 class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countable
 {

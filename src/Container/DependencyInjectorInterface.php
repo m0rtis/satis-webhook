@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 
-namespace Composer\Satis\Webhook;
+namespace Composer\Satis\Webhook\Container;
 
 
 use Psr\Container\ContainerInterface;

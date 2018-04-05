@@ -18,34 +18,31 @@ final class Handler extends App implements RequestHandlerInterface
     /**
      * Handler constructor.
      * @param iterable $config
+     * @throws \InvalidArgumentException
      */
     public function __construct(iterable $config)
     {
-        $config = $this->setDefaults($config);
+        $config = $this->setDefaults($config, __DIR__.'/Config/*.config.php');
         $config = new HandlerValidator($config);
         $container = $this->initContainerFromConfig($config[ContainerInterface::class]);
         $container['config'] = $config;
-        parent::__construct($config, $container);
+        parent::__construct(\iterator_to_array($config), $container);
         $this->initRoutesFromConfig($config[RouterInterface::class]);
     }
 
     /**
      * @param iterable|ContainerInterface $containerConfig
      * @return ContainerInterface
-     * @throws \InvalidArgumentException
      */
     private function initContainerFromConfig($containerConfig): ContainerInterface
     {
-        if ($containerConfig instanceof ContainerInterface) {
-            $container = $containerConfig;
-        } elseif (\is_array($containerConfig)
+        $container = $containerConfig;
+        if (\is_array($containerConfig)
             && isset($containerConfig['factory_class'])
             && class_exists($containerConfig['factory_class'])
         ) {
             $factory = new $containerConfig['factory_class']();
             $container = $factory($containerConfig);
-        } else {
-            throw new \InvalidArgumentException('Argument must be instance of ContainerInterface or array with key "factory_class"');
         }
 
         return $container;
@@ -56,9 +53,8 @@ final class Handler extends App implements RequestHandlerInterface
      * @param string $globPattern
      * @return iterable
      */
-    private function setDefaults(iterable $config, string $globPattern = './Config/*.config.php'): iterable
+    private function setDefaults(iterable $config, string $globPattern): iterable
     {
-        $globPattern = (new \SplFileInfo($globPattern))->getRealPath();
         $iterator = new \GlobIterator($globPattern, GLOB_BRACE);
         $defaults = [];
         /** @var \GlobIterator $file */
@@ -67,7 +63,7 @@ final class Handler extends App implements RequestHandlerInterface
         }
         $defaults = array_merge(...$defaults);
 
-        return array_merge_recursive($defaults, $config);
+        return array_replace_recursive($defaults, $config);
     }
 
     /**
