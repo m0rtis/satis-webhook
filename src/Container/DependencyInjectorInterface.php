@@ -11,7 +11,7 @@ interface DependencyInjectorInterface
 {
     public function __construct(ContainerInterface $container);
 
-    public function canInstantiate(string $id): bool;
+    public function canInstantiate(string $className): bool;
 
-    public function instantiate(string $id): object;
+    public function instantiate(string $className): object;
 }

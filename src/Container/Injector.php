@@ -16,23 +16,25 @@ final class Injector implements DependencyInjectorInterface
     }
 
     /**
-     * @param string $id
+     * @param string $className
      * @return bool
      * @throws \ReflectionException
      */
-    public function canInstantiate(string $id): bool
+    public function canInstantiate(string $className): bool
     {
         $answer = false;
-
         $container = $this->container;
         $self = $this;
-        $constructor = (new \ReflectionClass($id))->getConstructor();
-        $deps = array_filter($this->getDependencies($constructor), function ($dep) use ($container, $self) {
-            if ($container->has($dep)) {
+        $constructor = (new \ReflectionClass($className))->getConstructor();
+        $deps = array_filter($this->getDependencies($constructor), function ($type, $name) use ($container, $self) {
+            if ($container->has($type) || $container->has($name)) {
                 return false;
             }
-            return !$self->canInstantiate($dep);
-        });
+            if (\class_exists($type)) {
+                return !$self->canInstantiate($type);
+            }
+            return true;
+        }, ARRAY_FILTER_USE_BOTH);
         if (empty($deps)) {
             $answer = true;
         }
@@ -41,13 +43,13 @@ final class Injector implements DependencyInjectorInterface
     }
 
     /**
-     * @param string $id
+     * @param string $className
      * @return object
      * @throws \ReflectionException
      */
-    public function instantiate(string $id): object
+    public function instantiate(string $className): object
     {
-        $reflect = new \ReflectionClass($id);
+        $reflect = new \ReflectionClass($className);
         $deps = $this->getDependencies($reflect->getConstructor());
         $arguments = [];
         foreach ($deps as $name => $type) {
@@ -55,7 +57,7 @@ final class Injector implements DependencyInjectorInterface
                 $arguments[$name] = $this->container->get($type);
             } elseif ($this->container->has($name)) {
                 $arguments[$name] = $this->container->get($name);
-            } else {
+            } elseif (\class_exists($type)) {
                 $arguments[$name] = $this->instantiate($type);
             }
         }
@@ -70,8 +72,7 @@ final class Injector implements DependencyInjectorInterface
     {
         $deps = [];
         if ($constructor) {
-            $deps = $constructor->getParameters();
-            $deps = $this->getNames(array_filter($deps, function ($dep) {
+            $deps = $this->getNames(array_filter($constructor->getParameters(), function ($dep) {
                 /** @var \ReflectionParameter $dep */
                 return !$dep->isOptional();
             }));

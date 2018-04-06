@@ -24,7 +24,7 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      */
     protected $definitions;
     /**
-     * @var DependencyInjectorInterface|null
+     * @var DependencyInjectorInterface
      */
     private $injector;
 
@@ -40,6 +40,42 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
         $this->definitions = $definitions;
         $this->injector = $injector ?? new Injector($this);
     }
+
+    /**
+     * Finds an entry of the container by its identifier and returns it.
+     *
+     * @param string $id Identifier of the entry to look for.
+     *
+     * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
+     * @throws ContainerExceptionInterface Error while retrieving the entry.
+     *
+     * @return mixed Entry.
+     */
+    public function get($id)
+    {
+        if ($this->has($id)) {
+            return $this->getLazy($id);
+        }
+
+        throw new NotFoundException($id);
+    }
+
+    /**
+     * Returns true if the container can return an entry for the given identifier.
+     * Returns false otherwise.
+     *
+     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
+     * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
+     *
+     * @param string $id Identifier of the entry to look for.
+     *
+     * @return bool
+     */
+    public function has($id): bool
+    {
+        return isset($this->data[$id]) || $this->canResolve($id);
+    }
+
     /**
      * Return the current element
      * @link http://php.net/manual/en/iterator.current.php
@@ -108,9 +144,9 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      * The return value will be casted to boolean if non-boolean was returned.
      * @since 5.0.0
      */
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
-        return array_key_exists($offset, $this->data);
+        return $this->has($offset);
     }
 
     /**
@@ -139,7 +175,7 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
      * @return void
      * @since 5.0.0
      */
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->data[$offset] = $value;
     }
@@ -173,49 +209,9 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
     }
 
     /**
-     * Finds an entry of the container by its identifier and returns it.
-     *
-     * @param string $id Identifier of the entry to look for.
-     *
-     * @throws NotFoundExceptionInterface  No entry was found for **this** identifier.
-     * @throws ContainerExceptionInterface Error while retrieving the entry.
-     *
-     * @return mixed Entry.
-     */
-    public function get($id)
-    {
-        $result = null;
-        if (isset($this->data[$id])) {
-            $result = $this->data[$id];
-        } elseif($this->canResolve($id)) {
-            try {
-                $result = $this->resolve($id);
-            } catch (\Exception $e) {
-                throw new ContainerException($e);
-            }
-
-        } else {
-            throw new NotFoundException($id);
-        }
-        return $result;
-    }
-
-    /**
-     * Returns true if the container can return an entry for the given identifier.
-     * Returns false otherwise.
-     *
-     * `has($id)` returning true does not mean that `get($id)` will not throw an exception.
-     * It does however mean that `get($id)` will not throw a `NotFoundExceptionInterface`.
-     *
-     * @param string $id Identifier of the entry to look for.
-     *
+     * @param string $id
      * @return bool
      */
-    public function has($id): bool
-    {
-        return isset($this->data[$id]) || $this->canResolve($id);
-    }
-
     private function canResolve(string $id): bool
     {
         $result = $this->checkDefinitions($id);
@@ -235,23 +231,52 @@ class Container implements ContainerInterface, \ArrayAccess, \Iterator, \Countab
         if ($this->checkDefinitions($id)) {
             $definition = $this->definitions[$id];
             if (\is_callable($definition)) {
-                $resolved = $definition();
+                $resolved = $definition($this);
             } elseif ($this->has((string)$definition)) {
                 $resolved = $this->get($definition);
             }
         } else {
-            $resolved = $this->injector->instantiate($id);
+            $instance = $this->injector->instantiate($id);
+            if (false !== \stripos($id, 'factory') && \is_callable($instance)) {
+                $resolved = $instance($this);
+            } else {
+                $resolved = $instance;
+            }
         }
         return $resolved;
     }
 
+    /**
+     * @param string $id
+     * @return bool
+     */
     private function checkDefinitions(string $id): bool
     {
         $result = false;
-        if (isset($this->definitions[$id])
-            && (\is_callable($this->definitions[$id]) || $this->has((string)$this->definitions[$id]))) {
-            $result = true;
+        if (isset($this->definitions[$id])){
+            $def = $this->definitions[$id];
+            if (\is_callable($def) || $this->has((string)$def)) {
+                $result = true;
+            }
         }
         return $result;
+    }
+
+    /**
+     * @param string $id
+     * @return mixed
+     * @throws ContainerException
+     */
+    private function getLazy(string $id)
+    {
+        $item = $this->data[$id] ?? $id;
+        if (\is_string($item) && $this->canResolve($item)) {
+            try{
+                return $this->resolve($item);
+            } catch (\Exception $e) {
+                throw new ContainerException($e);
+            }
+        }
+        return $item;
     }
 }
