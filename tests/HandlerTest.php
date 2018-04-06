@@ -35,7 +35,7 @@ final class HandlerTest extends TestCase
         $this->assertInstanceOf(ContainerInterface::class, $handler2->getContainer());
     }
 
-    public function testInitRoutes()
+    public function testInitRoutesSingleRoute(): void
     {
         $config = [
             RouterInterface::class => [
@@ -49,6 +49,30 @@ final class HandlerTest extends TestCase
         ];
         $handler = new Handler($config);
         $route = $handler->getRouter()->getNamedRoute('test');
+
         $this->assertInstanceOf(Routable::class, $route);
+        $this->assertEquals('/test/', $route->getPattern());
+    }
+
+    public function testInitRouteGroupRoute(): void
+    {
+        $handler = new Handler([]);
+        $router = $handler->getRouter();
+        $path = $router->pathFor('update', [
+            'provider' => 'test',
+        ]);
+
+        $this->assertEquals('/command/test/update/', $path);
+    }
+
+    public function testAddUriKey()
+    {
+        $handler = new Handler(['uri_key' => '1234567']);
+        $router = $handler->getRouter();
+        $path = $router->pathFor('update', [
+            'provider' => 'test',
+        ]);
+
+        $this->assertSame('/command/test/update/1234567', $path);
     }
 }

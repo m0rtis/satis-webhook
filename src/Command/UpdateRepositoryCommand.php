@@ -7,7 +7,6 @@ namespace Composer\Satis\Webhook\Command;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Slim\Exception\HttpForbiddenException;
 
 final class UpdateRepositoryCommand extends BaseCommand
 {
@@ -17,14 +16,12 @@ final class UpdateRepositoryCommand extends BaseCommand
      * @param ResponseInterface $response
      * @param array $args
      * @return ResponseInterface
-     * @throws HttpForbiddenException
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
      * @throws \ReflectionException
      */
     public function __invoke(ServerRequestInterface $request, ResponseInterface $response, array $args)
     {
-        if (!$this->checkKey($args['key'])) {
-            throw new HttpForbiddenException($request, 'Invalid uri key. Provided: ' .$args['key']);
-        }
         $provider = $this->getProvider($args['provider']);
         $request = $provider->provide($request);
         $app = $this->setUp();

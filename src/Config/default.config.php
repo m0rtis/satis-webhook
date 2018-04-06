@@ -21,13 +21,13 @@ return [
             'type' => 'group',
             'routes' => [
                 'add' => [
-                    'pattern' => '/add/{provider}/{key}',
+                    'pattern' => '/{provider}/add/',
                     'type' => 'route',
                     'methods' => ['POST'],
                     'handler' => AddPackageCommand::class,
                 ],
                 'update' => [
-                    'pattern' => '/update/{provider}/{key}',
+                    'pattern' => '/{provider}/update/',
                     'type' => 'route',
                     'methods' => ['POST'],
                     'handler' => UpdateRepositoryCommand::class

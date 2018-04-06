@@ -64,20 +64,11 @@ abstract class BaseCommand
     {
         $name = ucfirst(strtolower($provider));
         $namespace = (new \ReflectionClass(ProviderInterface::class))->getNamespaceName();
-        $providerClass = $namespace.'/'.$name;
+        $providerClass = $namespace.'\\'.$name;
         if (\class_exists($providerClass)) {
             return new $providerClass();
         }
         throw new \InvalidArgumentException("Provider class $providerClass does not exist");
-    }
-
-    /**
-     * @param string $key
-     * @return bool
-     */
-    protected function checkKey(string $key): bool
-    {
-        return ($this->config->get('uri_key') === $key);
     }
 
     /**

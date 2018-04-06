@@ -8,13 +8,15 @@ namespace Composer\Satis\Webhook\Config;
 final class CommandValidator extends BaseConfigValidator
 {
     private $requiredKeys = [
-        'uri_key' => BaseConfigValidator::STRING,
         'satis_config' => BaseConfigValidator::STRING,
         'output_dir' => BaseConfigValidator::STRING
     ];
+
     /**
      * @param iterable $config
      * @return iterable
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
      */
     protected function validate(iterable $config): iterable
     {

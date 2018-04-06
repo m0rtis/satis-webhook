@@ -11,6 +11,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Slim\App;
+use Slim\Interfaces\RouteInterface;
 use Slim\Interfaces\RouterInterface;
 
 final class Handler extends App implements RequestHandlerInterface
@@ -75,11 +76,11 @@ final class Handler extends App implements RequestHandlerInterface
         foreach ($config as $name => $route) {
             if ('group' === $route['type']) {
                 $routable = $this->group($route['pattern'], function() use ($route, $name) {
-                    foreach ($route['routes'] as $groupRoute) {
-                        $this->map($groupRoute['methods'], $groupRoute['pattern'], $groupRoute['handler'])->setName($name);
+                    foreach ($route['routes'] as $groupName => $groupRoute) {
+                        $this->map($groupRoute['methods'], $groupRoute['pattern'], $groupRoute['handler'])->setName($groupName);
                     }
                 });
-            } else {
+            } elseif ('route' === $route['type']) {
                 $routable = $this->map($route['methods'], $route['pattern'], $route['handler'])->setName($name);
             }
             if (isset($route['middleware'])) {
@@ -89,6 +90,24 @@ final class Handler extends App implements RequestHandlerInterface
                 }, $middleware);
             }
         }
+    }
+
+    /**
+     * @param array $methods
+     * @param string $pattern
+     * @param callable|string $callable
+     * @return RouteInterface
+     * @throws \Psr\Container\ContainerExceptionInterface
+     */
+    public function map(array $methods, $pattern, $callable): RouteInterface
+    {
+        /** @var Container\Container $config */
+        $config = $this->getContainer()->get('config');
+        if ($config->has('uri_key')) {
+            $key = $config->get('uri_key');
+            $pattern = rtrim($pattern, '/').'/'.$key;
+        }
+        return parent::map($methods, $pattern, $callable);
     }
 
     /**
