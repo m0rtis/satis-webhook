@@ -17,8 +17,10 @@ abstract class AbstractProvider implements ProviderInterface
     {
         $packageName = $this->getPackageName($request);
         $secret = $this->getSecretToken($request);
+        $packageUrl = $this->getPackageUrl($request);
         $request = $request
             ->withAttribute('package_name', $packageName)
+            ->withAttribute('package_url', $packageUrl)
             ->withAttribute('secret', $secret);
         return $request;
     }
@@ -40,4 +42,10 @@ abstract class AbstractProvider implements ProviderInterface
      * @return string
      */
     abstract protected function getSecretToken(ServerRequestInterface $request): string;
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return string
+     */
+    abstract protected function getPackageUrl(ServerRequestInterface $request): string;
 }

@@ -12,13 +12,13 @@ final class Gitlab extends AbstractProvider
     /**
      * @param ServerRequestInterface $request
      * @return string
-     * @throws \InvalidArgumentException
+     * @throws \RuntimeException
      */
     protected function getPackageName(ServerRequestInterface $request): string
     {
         $payload = $this->getPayload($request);
         if (!isset($payload['project']['path_with_namespaces'])) {
-            throw new \InvalidArgumentException("Gitlab must provide 'project' array with 'path_with_namespaces' key");
+            throw new \RuntimeException("Gitlab must provide 'project' array with 'path_with_namespaces' key");
         }
         return $payload['project']['path_with_namespaces'];
     }
@@ -30,9 +30,24 @@ final class Gitlab extends AbstractProvider
      */
     protected function getSecretToken(ServerRequestInterface $request): string
     {
-        if (!$request->hasHeader('X-Gitlab-Token')) {
-            throw new \InvalidArgumentException("Gitlab must provide seret in 'X-Gitlab-Token' header");
+        $token = '';
+        if ($request->hasHeader('X-Gitlab-Token')) {
+            $token = $request->getHeaderLine('X-Gitlab-Token');
         }
-        return $request->getHeaderLine('X-Gitlab-Token');
+        return $token;
+    }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return string
+     * @throws \RuntimeException
+     */
+    protected function getPackageUrl(ServerRequestInterface $request): string
+    {
+        $payload = $this->getPayload($request);
+        if (!isset($payload['project']['url'])) {
+            throw new \RuntimeException("Gitlab must provide 'project' array with 'path_with_namespaces' key");
+        }
+        return $payload['project']['url'];
     }
 }

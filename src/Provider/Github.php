@@ -26,4 +26,13 @@ final class Github extends AbstractProvider
     {
         // TODO: Implement getSecretToken() method.
     }
+
+    /**
+     * @param ServerRequestInterface $request
+     * @return string
+     */
+    protected function getPackageUrl(ServerRequestInterface $request): string
+    {
+        // TODO: Implement getPackageUrl() method.
+    }
 }
