@@ -3,8 +3,10 @@ declare(strict_types=1);
 
 
 namespace Composer\Satis\Webhook\Config;
-use Composer\Satis\Webhook\Container\Container;
+
+
 use InvalidArgumentException;
+use m0rtis\SimpleBox\Container;
 
 
 /**
@@ -44,9 +46,10 @@ abstract class BaseConfigValidator extends Container
     protected function check(iterable $item, array $requiredKeys): void
     {
         foreach ($requiredKeys as $requiredKey => $types) {
-            if (!array_key_exists($requiredKey, $item)) {
+            if (!isset($item[$requiredKey])) {
                 throw new InvalidArgumentException(sprintf('Missing required key %s', $requiredKey));
             }
+
             if (\is_object($item[$requiredKey])) {
                 $givenType = \get_class($item[$requiredKey]);
             } else {
