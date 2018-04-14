@@ -17,8 +17,8 @@ final class Gitlab extends AbstractProvider
     protected function getPackageName(ServerRequestInterface $request): string
     {
         $payload = $this->getPayload($request);
-        if (!isset($payload['project']['path_with_namespaces'])) {
-            throw new \RuntimeException("Gitlab must provide 'project' array with 'path_with_namespaces' key");
+        if (!isset($payload['project']['path_with_namespace'])) {
+            throw new \RuntimeException("Gitlab must provide 'project' array with 'path_with_namespace' key");
         }
         return $payload['project']['path_with_namespaces'];
     }
