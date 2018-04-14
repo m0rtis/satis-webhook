@@ -1,5 +1,4 @@
 {
-  "name": "My cool private repository",
-  "homepage": "https://repo.example.com",
-  
+    "name": "My cool private repository",
+    "homepage": "https://repo.example.com"
 }
