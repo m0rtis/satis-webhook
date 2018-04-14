@@ -34,18 +34,21 @@ final class Handler extends App implements RequestHandlerInterface
     /**
      * @param iterable|ContainerInterface $containerConfig
      * @return ContainerInterface
+     * @throws \InvalidArgumentException
      */
     private function initContainerFromConfig($containerConfig): ContainerInterface
     {
-        $container = $containerConfig;
         if (\is_array($containerConfig)
             && isset($containerConfig['factory_class'])
             && class_exists($containerConfig['factory_class'])
         ) {
-            $factory = new $containerConfig['factory_class']();
-            $container = $factory($containerConfig);
+                $factory = new $containerConfig['factory_class']();
+                $container = $factory($containerConfig);
+        } elseif ($containerConfig instanceof ContainerInterface) {
+            $container = $containerConfig;
+        } else {
+            throw new \InvalidArgumentException('You should to provide valid Container factory class name or Container itself.');
         }
-
         return $container;
     }
 
@@ -101,10 +104,9 @@ final class Handler extends App implements RequestHandlerInterface
      */
     public function map(array $methods, $pattern, $callable): RouteInterface
     {
-        /** @var Container\Container $config */
         $config = $this->getContainer()->get('config');
-        if ($config->has('uri_key')) {
-            $key = $config->get('uri_key');
+        if (isset($config['uri_key'])) {
+            $key = $config['uri_key'];
             $pattern = rtrim($pattern, '/').'/'.$key;
         }
         return parent::map($methods, $pattern, $callable);
