@@ -4,6 +4,7 @@
     "type": "project",
     "require": {
         "php": "^7.2",
+        "m0rtis/simple-box": "^1.0",
         "composer/satis": "^1.0",
         "slim/slim": "^4.0",
         "psr/http-server-middleware": "^1.0"

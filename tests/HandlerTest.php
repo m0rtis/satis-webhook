@@ -5,30 +5,25 @@ declare(strict_types=1);
 namespace Composer\Satis\Webhook\Test;
 
 
-use Composer\Satis\Webhook\Command\AddPackageCommand;
-use Composer\Satis\Webhook\Container\ContainerFactory;
+use Composer\Satis\Webhook\Command\UpdateRepositoryCommand;
 use Composer\Satis\Webhook\Handler;
+use Composer\Satis\Webhook\Test\Mock\UpdateRepositoryCommandMock;
+use m0rtis\SimpleBox\ContainerFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
+use Slim\Http\Request;
 use Slim\Interfaces\RouterInterface;
 use Slim\Routable;
 
 final class HandlerTest extends TestCase
 {
-    private $config;
-
-    protected function setUp()/* The :void return type declaration that should be here would cause a BC issue */
-    {
-        $this->config = require __DIR__.'/../config/example.config.php';
-    }
-
     public function testInitContainerFromConfigAndSetDefaults(): void
     {
-        $config = $this->config;
+        $config = TestHelper::getConfig();
         $container = (new ContainerFactory())();
         $config[ContainerInterface::class] = $container;
         $handler1 = new Handler($config);
-        $handler2 = new Handler($this->config);
+        $handler2 = new Handler(TestHelper::getConfig());
 
         $this->assertArrayNotHasKey('factory_class', $handler1->getSetting(ContainerInterface::class));
         $this->assertSame($container, $handler1->getContainer());
@@ -43,7 +38,7 @@ final class HandlerTest extends TestCase
                     'type' => 'route',
                     'pattern' => '/test/',
                     'methods' => ['GET', 'POST'],
-                    'handler' => AddPackageCommand::class
+                    'handler' => UpdateRepositoryCommand::class
                 ]
             ]
         ];
@@ -65,7 +60,7 @@ final class HandlerTest extends TestCase
         $this->assertEquals('/command/test/update/', $path);
     }
 
-    public function testAddUriKey()
+    public function testAddUriKey(): void
     {
         $handler = new Handler(['uri_key' => '1234567']);
         $router = $handler->getRouter();
@@ -74,5 +69,24 @@ final class HandlerTest extends TestCase
         ]);
 
         $this->assertSame('/command/test/update/1234567', $path);
+    }
+
+    public function testHandle(): void
+    {
+        $globals = TestHelper::getGlobals();
+        $request = Request::createFromGlobals($globals);
+        $request = $request->withParsedBody(TestHelper::getGitlabAnswer());
+
+        $config = TestHelper::getConfig();
+        $config[RouterInterface::class]['root']['routes']['update']['handler'] = UpdateRepositoryCommandMock::class;
+
+        $handler = new Handler($config);
+        $response = $handler->handle($request);
+        $body = (string)$response->getBody();
+        $bodyArray = explode("\n", trim($body));
+
+        $this->assertCount(2, $bodyArray);
+        $this->assertContains('Add', $bodyArray[0]);
+        $this->assertContains('Build', $bodyArray[1]);
     }
 }

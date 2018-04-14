@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "1cf3219a2da6c8f9deb444a3107d3c2c",
+    "content-hash": "93997b0c41d30cefef561f04531f7edf",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -393,6 +393,57 @@
                 "schema"
             ],
             "time": "2018-02-14T22:26:30+00:00"
+        },
+        {
+            "name": "m0rtis/simple-box",
+            "version": "1.0.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://gitlab.com/m0rtis/simplebox.git",
+                "reference": "9ea71106e8bf006276d25ad4ef7eaacababdfd81"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://gitlab.com/api/v4/projects/m0rtis%2Fsimplebox/repository/archive.zip?sha=9ea71106e8bf006276d25ad4ef7eaacababdfd81",
+                "reference": "9ea71106e8bf006276d25ad4ef7eaacababdfd81",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2",
+                "psr/container": "^1.0"
+            },
+            "provide": {
+                "psr/container-implementation": "^1.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^7.0",
+                "roave/security-advisories": "dev-master"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "m0rtis\\SimpleBox\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "m0rtis",
+                    "email": "mail@m0rtis.ru"
+                }
+            ],
+            "description": "Simple PSR-11 container with autowiring",
+            "keywords": [
+                "Autowiring",
+                "PSR-11",
+                "container",
+                "dependency injection",
+                "di"
+            ],
+            "time": "2018-04-08T15:41:00+00:00"
         },
         {
             "name": "nikic/fast-route",
@@ -1045,12 +1096,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/debug.git",
-                "reference": "6aceca3332a19c8d5f963a3f41c59aeec5addf9b"
+                "reference": "c2c7c28603091b76499089fac34b8b68d58b4b81"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/debug/zipball/6aceca3332a19c8d5f963a3f41c59aeec5addf9b",
-                "reference": "6aceca3332a19c8d5f963a3f41c59aeec5addf9b",
+                "url": "https://api.github.com/repos/symfony/debug/zipball/c2c7c28603091b76499089fac34b8b68d58b4b81",
+                "reference": "c2c7c28603091b76499089fac34b8b68d58b4b81",
                 "shasum": ""
             },
             "require": {
@@ -1093,7 +1144,7 @@
             ],
             "description": "Symfony Debug Component",
             "homepage": "https://symfony.com",
-            "time": "2018-04-03T05:25:17+00:00"
+            "time": "2018-04-05T17:04:06+00:00"
         },
         {
             "name": "symfony/filesystem",
@@ -1791,12 +1842,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "f8ca4b604baf23dab89d87773c28cc07405189ba"
+                "reference": "17f97a68562e514a3b5df9b12a408e19f07e3990"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/f8ca4b604baf23dab89d87773c28cc07405189ba",
-                "reference": "f8ca4b604baf23dab89d87773c28cc07405189ba",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/17f97a68562e514a3b5df9b12a408e19f07e3990",
+                "reference": "17f97a68562e514a3b5df9b12a408e19f07e3990",
                 "shasum": ""
             },
             "require": {
@@ -1807,7 +1858,7 @@
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-token-stream": "^3.0",
                 "sebastian/code-unit-reverse-lookup": "^1.0.1",
-                "sebastian/environment": "^3.0",
+                "sebastian/environment": "^3.1",
                 "sebastian/version": "^2.0.1",
                 "theseer/tokenizer": "^1.1"
             },
@@ -1846,7 +1897,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-02-02T07:01:41+00:00"
+            "time": "2018-04-07T12:09:09+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -2040,12 +2091,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "b918d49a622814849ed12588ff0b5224dbab0ab7"
+                "reference": "8dd2e69889dbbb736858e0f5b96006ccbe5d61b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/b918d49a622814849ed12588ff0b5224dbab0ab7",
-                "reference": "b918d49a622814849ed12588ff0b5224dbab0ab7",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/8dd2e69889dbbb736858e0f5b96006ccbe5d61b9",
+                "reference": "8dd2e69889dbbb736858e0f5b96006ccbe5d61b9",
                 "shasum": ""
             },
             "require": {
@@ -2086,7 +2137,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "7.1-dev"
+                    "dev-master": "7.2-dev"
                 }
             },
             "autoload": {
@@ -2112,7 +2163,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2018-04-03T13:15:36+00:00"
+            "time": "2018-04-08T10:07:29+00:00"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -2120,12 +2171,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit-mock-objects.git",
-                "reference": "e87430881d0350549f021774cde397ebac28e972"
+                "reference": "df2956d8ef8afd94a1d06b7ad69e90deacdeb9b8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/e87430881d0350549f021774cde397ebac28e972",
-                "reference": "e87430881d0350549f021774cde397ebac28e972",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit-mock-objects/zipball/df2956d8ef8afd94a1d06b7ad69e90deacdeb9b8",
+                "reference": "df2956d8ef8afd94a1d06b7ad69e90deacdeb9b8",
                 "shasum": ""
             },
             "require": {
@@ -2168,7 +2219,7 @@
                 "mock",
                 "xunit"
             ],
-            "time": "2018-04-02T12:47:08+00:00"
+            "time": "2018-04-07T09:03:14+00:00"
         },
         {
             "name": "roave/security-advisories",
@@ -2381,12 +2432,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/comparator.git",
-                "reference": "34369daee48eafb2651bea869b4b15d75ccc35f9"
+                "reference": "f77ea710f800679202c6d92c3e2f2f56457a19f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/34369daee48eafb2651bea869b4b15d75ccc35f9",
-                "reference": "34369daee48eafb2651bea869b4b15d75ccc35f9",
+                "url": "https://api.github.com/repos/sebastianbergmann/comparator/zipball/f77ea710f800679202c6d92c3e2f2f56457a19f2",
+                "reference": "f77ea710f800679202c6d92c3e2f2f56457a19f2",
                 "shasum": ""
             },
             "require": {
@@ -2395,7 +2446,7 @@
                 "sebastian/exporter": "^3.1"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4"
+                "phpunit/phpunit": "^6.5 || ^7.0"
             },
             "type": "library",
             "extra": {
@@ -2437,7 +2488,7 @@
                 "compare",
                 "equality"
             ],
-            "time": "2018-02-01T13:46:46+00:00"
+            "time": "2018-04-06T14:40:13+00:00"
         },
         {
             "name": "sebastian/diff",
