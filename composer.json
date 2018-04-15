@@ -30,5 +30,6 @@
             "email": "mail@m0rtis.ru"
         }
     ],
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
